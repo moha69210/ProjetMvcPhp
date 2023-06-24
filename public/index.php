@@ -35,12 +35,11 @@ $router->addRoute(
 /* Register du form login */
 $router->addRoute(
   'register',
-  '/register/{param1}/{param2}',
-  'GET',
+  '/register',
+  'POST',
   IndexController::class,
   'register'
 );
-
 // /* Page D'accueil */
 // $router->addRoute(
 //   'homepage',

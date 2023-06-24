@@ -11,16 +11,33 @@ class IndexController extends AbstractController
     return $this->twig->render('login.html.twig');
   }
 
-  public function register($userName, $password)
+  public function register()
   {
-    var_dump($userName );
-    // Exemple de requête utilisant la connexion à la base de données
-    $query = "SELECT * FROM users where username = '$userName' and password = '$password";
-    $statement = $this->pdo->query($query);
-    $users = $statement->fetchAll(PDO::FETCH_ASSOC);
-    
-    var_dump($users);
-    // // Utilisation de la connexion et du moteur de templating Twig
+    $userName = $_POST['_username'];
+    $password = $_POST['_password'];
+
+    /* Préparation de la requête */
+    $query = "SELECT * FROM users WHERE username = :username AND password = :password";
+    $statement = $this->pdo->prepare($query);
+
+    $statement->bindParam(':username', $userName);
+    $statement->bindParam(':password', $password);
+
+    $statement->execute();
+
+    // Fetch the results
+    $users = $statement->fetch(PDO::FETCH_OBJ);
+
+    if (empty($users)) {
+      $error = 'Le mot de passe ou le pseudo indiqué est erronée';
+      return $this->twig->render('login.html.twig', ['error' => $error]);
+    } else {
+      /* On stocke en session les infos du users connecté */
+      $_SESSION['user'] = $users;
+
+      return $this->twig->render('index.html.twig', ['username' => $users->username]);
+    }
+
     // $content = $this->twig->render('users/index.twig', ['users' => $users]);
 
     // return $this->twig->render('login.html.twig');

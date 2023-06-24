@@ -43,18 +43,30 @@
 			input[type="submit"]:hover {
 				background-color: #45a049;
 			}
+			.error-message {
+				color: red;
+				padding: 10px;
+				/* Add other styles as needed */
+			}
 		</style>
 	</head>
 	<body>
 		<div class="container">
+
 			<h2>Connexion</h2>
 
-			<form action="/register" method="GET">
+			<form action="/register" method="POST">
 				<label for="username">Nom d'utilisateur:</label>
 				<input type="text" id="username" name="_username" required>
 
 				<label for="password">Mot de passe:</label>
 				<input type="password" id="password" name="_password" required>
+
+				{% if error is defined %}
+					<div class="error-message">
+						{{ error }}
+					</div>
+				{% endif %}
 
 				<input type="submit" value="Se connecter">
 			</form>
