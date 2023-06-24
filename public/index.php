@@ -13,25 +13,6 @@ use Twig\Loader\FilesystemLoader;
 $dotenv = new Dotenv();
 $dotenv->loadEnv(__DIR__ . '/../.env');
 
-// DB
-[
-  'DB_HOST'     => $host,
-  'DB_PORT'     => $port,
-  'DB_NAME'     => $dbname,
-  'DB_CHARSET'  => $charset,
-  'DB_USER'     => $user,
-  'DB_PASSWORD' => $password
-] = $_ENV;
-
-$dsn = "mysql:dbname=$dbname;host=$host:$port;charset=$charset";
-
-try {
-  $pdo = new PDO($dsn, $user, $password);
-} catch (PDOException $ex) {
-  echo "Erreur lors de la connexion à la base de données : " . $ex->getMessage();
-  exit;
-}
-
 // Twig
 $loader = new FilesystemLoader(__DIR__ . '/../templates/');
 $twig = new Environment($loader, [
@@ -41,20 +22,51 @@ $twig = new Environment($loader, [
 
 // Appeler un routeur pour lui transférer la requête
 $router = new Router($twig);
+
+/* Page Login */
 $router->addRoute(
   'homepage',
   '/',
   'GET',
   IndexController::class,
-  'home'
+  'login'
 );
+
+/* Register du form login */
 $router->addRoute(
-  'contact_page',
-  '/contact',
+  'register',
+  '/register/{param1}/{param2}',
   'GET',
-  ContactController::class,
-  'contact'
+  IndexController::class,
+  'register'
 );
+
+// /* Page D'accueil */
+// $router->addRoute(
+//   'homepage',
+//   '/home',
+//   'POST',
+//   IndexController::class,
+//   'home'
+// );
+
+// /* Page Contact */
+// $router->addRoute(
+//   'homepage',
+//   '/',
+//   'GET',
+//   IndexController::class,
+//   'home'
+// );
+
+// /* Page Gestion */
+// $router->addRoute(
+//   'homepage',
+//   '/',
+//   'GET',
+//   IndexController::class,
+//   'home'
+// );
 
 try {
   $router->execute($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD']);
@@ -62,3 +74,4 @@ try {
   http_response_code(404);
   echo "Page not found";
 }
+

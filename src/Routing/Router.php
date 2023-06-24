@@ -49,6 +49,7 @@ class Router
   public function execute(string $requestUri, string $httpMethod)
   {
     $route = $this->getRoute($requestUri, $httpMethod);
+  
 
     if ($route === null) {
       throw new RouteNotFoundException($requestUri, $httpMethod);
