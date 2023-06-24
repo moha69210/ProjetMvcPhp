@@ -40,6 +40,15 @@ $router->addRoute(
   IndexController::class,
   'register'
 );
+
+/* Register du form login */
+$router->addRoute(
+  'testIsAuthWork',
+  '/testIsAuthWork',
+  'GET',
+  IndexController::class,
+  'testIsAuthWork'
+);
 // /* Page D'accueil */
 // $router->addRoute(
 //   'homepage',
@@ -73,4 +82,3 @@ try {
   http_response_code(404);
   echo "Page not found";
 }
-

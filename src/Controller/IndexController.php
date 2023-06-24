@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Middleware\Authenticated;
+
 use PDO;
 
 class IndexController extends AbstractController
@@ -46,5 +48,11 @@ class IndexController extends AbstractController
   public function logout()
   {
     return $this->twig->render('login.html.twig');
+  }
+
+  #[Authenticated]
+  public function testIsAuthWork()
+  {
+    return $this->twig->render('testAuth.html.twig');
   }
 }
