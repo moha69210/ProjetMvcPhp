@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Middleware\Authenticated;
-
+use App\Model\User;
 use PDO;
 
 class IndexController extends AbstractController
@@ -35,9 +35,14 @@ class IndexController extends AbstractController
       return $this->twig->render('login.html.twig', ['error' => $error]);
     } else {
       /* On stocke en session les infos du users connecté */
-      $_SESSION['user'] = $users;
+      session_start();
 
-      return $this->twig->render('index.html.twig', ['username' => $users->username]);
+      $user = new User();
+      $user->username = $users->username;
+      $user->role = $users->role;
+      $_SESSION['user'] = $user;  
+
+      return $this->twig->render('index.html.twig',['username' => $user->username]);
     }
 
     // $content = $this->twig->render('users/index.twig', ['users' => $users]);
@@ -50,7 +55,7 @@ class IndexController extends AbstractController
     return $this->twig->render('login.html.twig');
   }
 
-  #[Authenticated]
+  // #[Authenticated]
   public function testIsAuthWork()
   {
     return $this->twig->render('testAuth.html.twig');

@@ -49,6 +49,7 @@ $router->addRoute(
   IndexController::class,
   'testIsAuthWork'
 );
+
 // /* Page D'accueil */
 // $router->addRoute(
 //   'homepage',
