@@ -50,6 +50,8 @@ class Router
    */
   public function execute(string $requestUri, string $httpMethod)
   {
+    session_start();
+
     $route = $this->getRoute($requestUri, $httpMethod);
 
     if ($route === null) {

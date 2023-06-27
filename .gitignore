@@ -3,4 +3,3 @@ vendor/
 conf/*.ini
 .vscode/
 .env.local
-.env
