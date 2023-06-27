@@ -34,6 +34,15 @@ $router->addRoute(
 
 /* Register du form login */
 $router->addRoute(
+  'registerPage',
+  '/registerPage',
+  'GET',
+  IndexController::class,
+  'registerPage'
+);
+
+/* Register du form login */
+$router->addRoute(
   'register',
   '/register',
   'POST',
@@ -41,7 +50,16 @@ $router->addRoute(
   'register'
 );
 
-/* Register du form login */
+/* SignIn page Login */
+$router->addRoute(
+  'signIn',
+  '/signIn',
+  'POST',
+  IndexController::class,
+  'signIn'
+);
+
+/* Register du form testAuth */
 $router->addRoute(
   'testIsAuthWork',
   '/testIsAuthWork',

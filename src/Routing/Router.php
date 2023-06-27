@@ -68,11 +68,17 @@ class Router
 
     // Récupération des attributs Authenticated sur la méthode du contrôleur
     $attributes = $reflection->getAttributes(Authenticated::class);
+    var_dump($attributes);
 
-    // Si un attribut Authenticated est présent et que l'utilisateur n'est pas authentifié, redirection vers la page de connexion
-    if (!empty($attributes) && !isset($_SESSION['user'])) {
-      header('Location: /');
-      exit();
+    if (!empty($attributes)) {
+      // $authAttribute = $attributes[0]->newInstance();
+
+      // Si un attribut Authenticated est présent et que l'utilisateur n'est pas authentifié, redirection vers la page de connexion
+      // if (!isset($_SESSION['user']) || $_SESSION['user']->role !== $authAttribute->getRole()) {
+      if (!isset($_SESSION['user']) || $_SESSION['user']) {
+        header('Location: /');
+        exit();
+      }
     }
 
     echo $controllerInstance->$method();
