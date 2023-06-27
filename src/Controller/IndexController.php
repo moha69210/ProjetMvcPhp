@@ -55,4 +55,28 @@ class IndexController extends AbstractController
   {
     return $this->twig->render('testAuth.html.twig');
   }
+
+  public function signIn()
+  {
+    $userName = $_POST['_username'];
+    $password = $_POST['_password'];
+    $role = "users";
+
+    /* Préparation de la requête */
+    $query = "INSERT INTO users (username, password, role) VALUES (:username, :password, :role)";
+    $statement = $this->pdo->prepare($query);
+
+    $statement->bindParam(':username', $userName);
+    $statement->bindParam(':password', $password);
+    $statement->bindParam(':role', $$role);
+
+    $statement->execute();
+
+    // Fetch the results
+    $users = $statement->fetch(PDO::FETCH_OBJ);
+
+    $_SESSION['user'] = $users;
+
+    return $this->twig->render('index.html.twig', ['username' => $users->username]);
+  }
 }
