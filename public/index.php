@@ -68,6 +68,15 @@ $router->addRoute(
   'testIsAuthWork'
 );
 
+/* Register du form testAuth */
+$router->addRoute(
+  'logout',
+  '/logout',
+  'GET',
+  IndexController::class,
+  'logout'
+);
+
 // /* Page D'accueil */
 // $router->addRoute(
 //   'homepage',
