@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Middleware\Authenticated;
 use App\Model\User;
 use PDO;
+use App\Routing\Attribute\Route;
 
 class IndexController extends AbstractController
 {
@@ -20,10 +21,10 @@ class IndexController extends AbstractController
 
   public function logout()
   {
+    session_destroy();
     return $this->twig->render('login.html.twig');
   }
-
-  #[Authenticated("user")]
+  #[Route(path: "/", name: 'home')]
   public function testIsAuthWork()
   {
     return $this->twig->render('testAuth.html.twig');
@@ -33,7 +34,7 @@ class IndexController extends AbstractController
   {
     $userName = $_POST['_username'];
     $password = $_POST['_password'];
-    $role = "users";
+    $role = User::userRole;
 
     // Hashage du mot de passe
     $passwordHash = password_hash($password, PASSWORD_DEFAULT);
@@ -48,8 +49,7 @@ class IndexController extends AbstractController
 
     $statement->execute();
 
-    // Redirect to login page or wherever you want
-    header('Location: /');
+    return $this->twig->render('login.html.twig');
     exit();
   }
 
@@ -69,9 +69,8 @@ class IndexController extends AbstractController
     // Fetch the results
     $user = $statement->fetch(PDO::FETCH_OBJ);
 
-    if (!$user || !password_verify($password, $user->password)) {
-      $error = 'Le mot de passe ou le pseudo indiqué est erronée';
-      return $this->twig->render('login.html.twig', ['error' => $error]);
+    if (empty($user) || !password_verify($password, $user->password)) {
+      redirectToLogin();
     } else {
       /* On stocke en session les infos du user connecté */
       unset($user->password);
@@ -79,5 +78,11 @@ class IndexController extends AbstractController
 
       return $this->twig->render('index.html.twig', ['username' => $user->username]);
     }
+  }
+
+  public function redirectToLogin()
+  {
+    $error = 'Le mot de passe ou le pseudo indiqué est erronée';
+    return $this->twig->render('login.html.twig', ['error' => $error]);
   }
 }
