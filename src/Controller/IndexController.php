@@ -23,7 +23,7 @@ class IndexController extends AbstractController
     return $this->twig->render('login.html.twig');
   }
 
-  #[Authenticated]
+  #[Authenticated("user")]
   public function testIsAuthWork()
   {
     return $this->twig->render('testAuth.html.twig');

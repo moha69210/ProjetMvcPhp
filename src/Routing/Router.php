@@ -68,7 +68,7 @@ class Router
 
     // Récupération des attributs Authenticated sur la méthode du contrôleur
     $attributes = $reflection->getAttributes(Authenticated::class);
-    var_dump($attributes);
+    var_dump($_SESSION['user']);
 
     if (!empty($attributes)) {
       // $authAttribute = $attributes[0]->newInstance();
