@@ -24,6 +24,8 @@ class IndexController extends AbstractController
     session_destroy();
     return $this->twig->render('login.html.twig');
   }
+
+  #[Authenticated('admin')]
   #[Route(path: "/", name: 'home')]
   public function testIsAuthWork()
   {
