@@ -7,15 +7,15 @@ use Attribute;
 #[Attribute(Attribute::TARGET_METHOD)]
 class Authenticated
 {
-    // private string $role;
+    private array $roles;
 
-    // public function __construct(string $role = 'user')
-    // {
-    //     $this->role = $role;
-    // }
+    public function __construct(string ...$roles)
+    {
+        $this->roles = $roles;
+    }
 
-    // public function getRole(): string
-    // {
-    //     return $this->role;
-    // }
+    public function hasRole(string $role): bool
+    {
+        return in_array($role, $this->roles);
+    }
 }
