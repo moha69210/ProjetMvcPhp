@@ -2,36 +2,40 @@
 
 namespace App\Controller;
 
-use App\Middleware\Authenticated;
 use App\Model\User;
 use PDO;
 use App\Routing\Attribute\Route;
 
 class IndexController extends AbstractController
 {
+  
+  #[Route("/", name: "homepage", httpMethod: "GET")]
   public function login()
   {
     return $this->twig->render('login.html.twig');
   }
 
+  #[Route('/registerPage', name: "registerPage", httpMethod: "GET")]
   public function registerPage()
   {
     return $this->twig->render('register.html.twig');
   }
 
+  #[Route('/logout', name: "logout", httpMethod: "GET")]
   public function logout()
   {
-    session_destroy();
+    session_start(); // Start the session
+    session_destroy(); // Destroy the session
     return $this->twig->render('login.html.twig');
   }
 
-  #[Authenticated('admin')]
-  #[Route(path: "/", name: 'home')]
+  #[Route(path: '/testIsAuthWork', name: 'testIsAuthWork', httpMethod: "GET")]
   public function testIsAuthWork()
   {
     return $this->twig->render('testAuth.html.twig');
   }
 
+  #[Route(path: '/register', name: 'register', httpMethod: "POST")]
   public function register()
   {
     $userName = $_POST['_username'];
@@ -55,6 +59,7 @@ class IndexController extends AbstractController
     exit();
   }
 
+  #[Route(path: '/signIn', name: 'signIn', httpMethod: "POST")]
   public function signIn()
   {
     $userName = $_POST['_username'];
@@ -72,11 +77,12 @@ class IndexController extends AbstractController
     $user = $statement->fetch(PDO::FETCH_OBJ);
 
     if (empty($user) || !password_verify($password, $user->password)) {
-      redirectToLogin();
+      $this->redirectToLogin();
     } else {
       /* On stocke en session les infos du user connecté */
       unset($user->password);
       $_SESSION['user'] = $user;
+      session_start();
 
       return $this->twig->render('index.html.twig', ['username' => $user->username]);
     }
