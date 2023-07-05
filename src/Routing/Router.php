@@ -2,14 +2,19 @@
 
 namespace App\Routing;
 
-use App\Middleware;
-use Twig\Environment;
+use App\Routing\Attribute\Route;
+use App\Utils\Filesystem;
+use Psr\Container\ContainerInterface;
+use ReflectionClass;
+use ReflectionException;
 use ReflectionMethod;
 
 class Router
 {
+  private const CONTROLLERS_GLOB_PATH = __DIR__ . "/../Controller/*Controller.php";
+
   public function __construct(
-    private Environment $twig
+    private ContainerInterface $container
   ) {
   }
 
@@ -50,32 +55,46 @@ class Router
    */
   public function execute(string $requestUri, string $httpMethod)
   {
-    session_start();
-
     $route = $this->getRoute($requestUri, $httpMethod);
 
     if ($route === null) {
       throw new RouteNotFoundException($requestUri, $httpMethod);
     }
 
-    $controller = $route['controller'];
+    $controllerClass = $route['controller'];
     $method = $route['method'];
 
-    $controllerInstance = new $controller($this->twig);
+    $constructorParams = $this->getMethodParams($controllerClass . '::__construct');
+    $controllerInstance = new $controllerClass(...$constructorParams);
 
-    $reflection = new ReflectionMethod($controller, $method);
-    $attributes = $reflection->getAttributes(Authenticated::class);
+    $controllerParams = $this->getMethodParams($controllerClass . '::' . $method);
+    echo $controllerInstance->$method(...$controllerParams);
+  }
 
-    if (!empty($attributes)) {
-      $authAttribute = $attributes[0]->newInstance();
+  /**
+   * Get an array containing services instances guessed from method signature
+   *
+   * @param string $method Format : FQCN::method
+   * @return array The services to inject
+   */
+  private function getMethodParams(string $method): array
+  {
+    $params = [];
 
-      if (!isset($_SESSION['user']) || !$authAttribute->hasRole($_SESSION['user']->role)) {
-        header('Location: /login');
-        exit();
-      }
+    try {
+      $methodInfos = new ReflectionMethod($method);
+    } catch (ReflectionException $e) {
+      return [];
+    }
+    $methodParams = $methodInfos->getParameters();
+
+    foreach ($methodParams as $methodParam) {
+      $paramType = $methodParam->getType();
+      $paramTypeName = $paramType->getName();
+      $params[] = $this->container->get($paramTypeName);
     }
 
-    echo $controllerInstance->$method();
+    return $params;
   }
 
   public function registerRoutes(): void
