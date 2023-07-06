@@ -16,18 +16,21 @@ class IndexController extends AbstractController
     return $this->twig->render('login.html.twig');
   }
 
+  #[Authorize("users")]
   #[Route("/home", name: "homepage", httpMethod: "GET")]
   public function home()
   {
-    return $this->twig->render('index.html.twig');
+    return $this->twig->render('index.html.twig', ['username' => $_SESSION['user']->username]);
   }
 
+  #[Authorize("users")]
   #[Route('/registerPage', name: "registerPage", httpMethod: "GET")]
   public function registerPage()
   {
     return $this->twig->render('register.html.twig');
   }
 
+  #[Authorize("users")]
   #[Route('/logout', name: "logout", httpMethod: "GET")]
   public function logout()
   {
@@ -35,11 +38,12 @@ class IndexController extends AbstractController
     return $this->twig->render('login.html.twig');
   }
 
-  #[Authorize("users")]
+  // Seul les admin ont le droit d'accéder a cet page
+  #[Authorize("admin")]
   #[Route(path: '/testIsAuthWork', name: 'testIsAuthWork', httpMethod: "GET")]
   public function testIsAuthWork()
   {
-    return $this->twig->render('testAuth.html.twig');
+    return $this->twig->render('testAuth.html.twig',['username' => $_SESSION['user']->username]);
   }
 
   #[Route(path: '/register', name: 'register', httpMethod: "POST")]
@@ -62,8 +66,9 @@ class IndexController extends AbstractController
 
     $statement->execute();
 
-    return $this->twig->render('login.html.twig');
-    exit();
+    $inscription = 'Votre inscription à bien été enregistré, vous pouvez désormais vous connecter';
+
+    return $this->twig->render('login.html.twig', ['inscription' => $inscription ]);
   }
 
   #[Route(path: '/signIn', name: 'signIn', httpMethod: "POST")]
@@ -84,19 +89,16 @@ class IndexController extends AbstractController
     $user = $statement->fetch(PDO::FETCH_OBJ);
 
     if (empty($user) || !password_verify($password, $user->password)) {
-      $this->redirectToLogin();
+      $error = 'Le mot de passe ou le pseudo indiqué est erronée';
+      return $this->twig->render('login.html.twig', ['error' => $error]);
+
     } else {
       /* On stocke en session les infos du user connecté */
       unset($user->password);
       $_SESSION['user'] = $user;
 
-      return $this->twig->render('index.html.twig', ['username' => $user->username]);
+      return $this->twig->render('index.html.twig', ['username' => $_SESSION['user']->username]);
     }
   }
 
-  public function redirectToLogin()
-  {
-    $error = 'Le mot de passe ou le pseudo indiqué est erronée';
-    return $this->twig->render('login.html.twig', ['error' => $error]);
-  }
 }

@@ -48,6 +48,12 @@
 				padding: 10px;
 				/* Add other styles as needed */
 			}
+			
+			.good-message {
+			color: green;
+			padding: 10px;
+			}
+
 			a.register-link {
   				display: inline-block;
   				text-align: center;
@@ -83,6 +89,12 @@
 				{% if error is defined %}
 					<div class="error-message">
 						{{ error }}
+					</div>
+				{% endif %}
+
+				{% if inscription is defined %}
+					<div class="good-message">
+						{{ inscription }}
 					</div>
 				{% endif %}
 

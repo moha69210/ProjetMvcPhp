@@ -55,4 +55,14 @@ CREATE TABLE users (
 - Formulaire d'inscription : un formulaire d'inscription a été mis en place pour permettre aux nouveaux utilisateurs de créer un compte dans l'application.
 - Initialisation des sessions : les informations de l'utilisateur sont enregistrées dans des variables de session pour gérer l'authentification.
 - Déconnexion : une fonctionnalité de déconnexion a été ajoutée pour permettre aux utilisateurs de se déconnecter de l'application.
-- Authentification et autorisations : des attributs d'authentification ont été ajoutés pour vérifier les rôles et les droits de l'utilisateur. Un middleware a été utilisé pour vérifier l'accès aux routes en fonction des attributs d'authentification.
+- Authentification et autorisations : des attributs d'authentification ont été ajoutés pour vérifier les rôles et les droits de l'utilisateur. Un middleware a été utilisé pour vérifier l'accès aux routes en fonction des attributs d'authentification
+
+**Explication Authentification et autorisations**
+
+- L'attribut #[Authorize] est utilisé pour vérifier à la fois si l'utilisateur est autorisé à accéder à une certaine page et s'il est connecté. Il permet de contrôler l'accès aux routes en fonction du rôle de l'utilisateur.
+
+- Dans la méthode verifyRole() du Router, le code vérifie si l'attribut #[Authorize] est présent pour la méthode en cours d'exécution. S'il est présent, le code vérifie d'abord si l'utilisateur est connecté en vérifiant la présence de la variable de session $_SESSION['user']. Ensuite, il vérifie si le rôle de l'utilisateur correspond au rôle requis spécifié dans l'attribut #[Authorize].
+
+- Si l'utilisateur n'est pas connecté ou n'a pas le rôle requis, le code effectue une redirection vers la page d'accueil (/) en utilisant la fonction header(). Cela garantit que seuls les utilisateurs connectés et ayant le rôle requis peuvent accéder à la page protégée.
+
+- En résumé, l'attribut #[Authorize] sert à la fois à vérifier l'autorisation d'accès et à s'assurer que l'utilisateur est connecté avant d'exécuter une méthode spécifique. Cela permet de contrôler finement l'accès aux différentes parties de votre application.
