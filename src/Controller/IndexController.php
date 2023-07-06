@@ -23,7 +23,6 @@ class IndexController extends AbstractController
     return $this->twig->render('index.html.twig', ['username' => $_SESSION['user']->username]);
   }
 
-  #[Authorize("users")]
   #[Route('/registerPage', name: "registerPage", httpMethod: "GET")]
   public function registerPage()
   {
