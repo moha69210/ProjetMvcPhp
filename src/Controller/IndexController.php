@@ -10,10 +10,16 @@ use App\Routing\Attribute\Route;
 class IndexController extends AbstractController
 {
 
-  #[Route("/", name: "homepage", httpMethod: "GET")]
+  #[Route("/", name: "loginPage", httpMethod: "GET")]
   public function login()
   {
     return $this->twig->render('login.html.twig');
+  }
+
+  #[Route("/home", name: "homepage", httpMethod: "GET")]
+  public function home()
+  {
+    return $this->twig->render('index.html.twig');
   }
 
   #[Route('/registerPage', name: "registerPage", httpMethod: "GET")]
@@ -25,8 +31,7 @@ class IndexController extends AbstractController
   #[Route('/logout', name: "logout", httpMethod: "GET")]
   public function logout()
   {
-    session_start(); // Start the session
-    session_destroy(); // Destroy the session
+    session_destroy();
     return $this->twig->render('login.html.twig');
   }
 
@@ -84,7 +89,6 @@ class IndexController extends AbstractController
       /* On stocke en session les infos du user connecté */
       unset($user->password);
       $_SESSION['user'] = $user;
-      var_dump($_SESSION['user']);
 
       return $this->twig->render('index.html.twig', ['username' => $user->username]);
     }

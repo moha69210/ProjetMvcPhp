@@ -1,1 +1,53 @@
-<h1>est ce que ça fonctionne ?</h1>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f4;
+        }
+
+        .navbar {
+            background-color: #333;
+            color: #ffffff;
+            padding: 10px;
+            text-align: right;
+        }
+
+        .navbar a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+
+        .navbar a:hover {
+            color: #cccccc;
+        }
+
+        .main-content {
+            margin: 0 auto;
+            max-width: 800px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #333333;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/home">Home</a>
+        <a href="/logout">Déconnexion</a>
+    </div>
+    <div class="main-content">
+        <h1>{{ username }} a accès à cette page</h1>
+    </div>
+</body>
+</html>
