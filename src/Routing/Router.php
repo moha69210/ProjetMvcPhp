@@ -3,7 +3,9 @@
 namespace App\Routing;
 
 use App\Routing\Attribute\Route;
+use App\Routing\Attribute\Authorize;
 use App\Utils\Filesystem;
+use Exception;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionException;
@@ -64,6 +66,8 @@ class Router
     $controllerClass = $route['controller'];
     $method = $route['method'];
 
+    $this->verifyRole($controllerClass, $method);
+
     $constructorParams = $this->getMethodParams($controllerClass . '::__construct');
     $controllerInstance = new $controllerClass(...$constructorParams);
 
@@ -96,6 +100,32 @@ class Router
 
     return $params;
   }
+
+  private function verifyRole(string $controllerClass, string $method)
+  {
+    $reflection = new ReflectionMethod($controllerClass, $method);
+    $authorizeAttributes = $reflection->getAttributes(Authorize::class);
+
+    if (!empty($authorizeAttributes)) {
+      // Vérifier si l'utilisateur est connecté
+      if (!isset($_SESSION['user'])) {
+        header("Location: /");
+      }
+
+      $authorizeAttribute = $authorizeAttributes[0];
+      $roleRequired = $authorizeAttribute->newInstance()->role;
+
+      // Vérifier si l'utilisateur a un rôle
+      if (!isset($_SESSION['user']->role)) {
+        header("Location: /");
+      }
+
+      if ($_SESSION['user']->role !== $roleRequired) {
+        header("Location: /");
+      }
+    }
+  }
+
 
   public function registerRoutes(): void
   {

@@ -3,12 +3,13 @@
 namespace App\Controller;
 
 use App\Model\User;
+use App\Routing\Attribute\Authorize;
 use PDO;
 use App\Routing\Attribute\Route;
 
 class IndexController extends AbstractController
 {
-  
+
   #[Route("/", name: "homepage", httpMethod: "GET")]
   public function login()
   {
@@ -29,6 +30,7 @@ class IndexController extends AbstractController
     return $this->twig->render('login.html.twig');
   }
 
+  #[Authorize("users")]
   #[Route(path: '/testIsAuthWork', name: 'testIsAuthWork', httpMethod: "GET")]
   public function testIsAuthWork()
   {
@@ -82,7 +84,7 @@ class IndexController extends AbstractController
       /* On stocke en session les infos du user connecté */
       unset($user->password);
       $_SESSION['user'] = $user;
-      session_start();
+      var_dump($_SESSION['user']);
 
       return $this->twig->render('index.html.twig', ['username' => $user->username]);
     }
